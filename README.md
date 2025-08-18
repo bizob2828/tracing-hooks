@@ -1,14 +1,14 @@
 # Tracing Hooks
-This repository contains a ESM loader for injecting tracing channel hooks into Node.js modules. It also has a patch ofr Module to be used to patch CJS modules.
-
+This repository contains a ESM loader for injecting tracing channel hooks into Node.js modules. It also has a patch for Module to be used to patch CJS modules.
 
 ## Usage
 
 To load esm loader:
 
 ```js
+// esm-loader.mjs
 import { register } from 'node:module';
-const packages = new Set('pkg1', 'pkg2');
+const packages = new Set(['pkg1', 'pkg2']);
 const instrumentations = [
   {
     channelName: 'channel1',
@@ -35,11 +35,18 @@ register('@apm-js-collab/tracing-hooks/hook.mjs', import.meta.url, {
 });
 ```
 
+To use the loader, you can run your Node.js application with the `--import` flag:
+
+```bash
+node --import esm-loader.mjs your-app.js
+```
+
 To load CJS patch:
 
 ```js
+// cjs-patch.js
 const ModulePatch = require('@apm-js-collab/tracing-hooks')
-const packages = new Set('pkg1', 'pkg2');
+const packages = new Set(['pkg1', 'pkg2']);
 const instrumentations = [
   {
     channelName: 'channel1',
@@ -64,5 +71,11 @@ const instrumentations = [
 
 const modulePatch = new ModulePatch({ instrumentations, packages });
 modulePatch.patch()
+```
+
+To use the CJS patch you can run your Node.js application with the `--require` flag:
+
+```bash
+node --require cjs-patch.js your-app.js
 ```
 

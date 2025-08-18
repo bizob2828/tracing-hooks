@@ -6,13 +6,15 @@ import parse from 'module-details-from-path'
 import { fileURLToPath } from 'node:url'
 import getPackageVersion from './lib/get-package-version.js'
 const debug = createDebug('@apm-js-collab/tracing-hooks:esm-hook')
-const transformers = new Map()
+let transformers = null
+let packages = null
 let instrumentator = null
-let packages 
 
-export async function initialize(data) {
-  instrumentator = create(data?.instrumentations || [])
+export async function initialize(data = {}) {
+  const instrumentations = data?.instrumentations || []
+  instrumentator = create(instrumentations)
   packages = data?.packages || new Set()
+  transformers = new Map()
 }
 
 export async function resolve(specifier, context, nextResolve) {
@@ -48,7 +50,7 @@ export async function load(url, context, nextLoad) {
       result.source = transformedCode
       result.shortCircuit = true
     } catch(err) {
-      debug('Error transforming module %s: %o', filename, error)
+      debug('Error transforming module %s: %o', url, err)
     } finally {
       transformer.free()
     }
