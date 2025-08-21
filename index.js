@@ -40,7 +40,7 @@ class ModulePatch {
         const transformer = self.transformers.get(filename)
         try {
           const transformedCode = transformer.transform(content, 'unknown')
-          args[0] = transformedCode
+          args[0] = transformedCode?.code
         } catch (error) {
           debug('Error transforming module %s: %o', filename, error)
         } finally {

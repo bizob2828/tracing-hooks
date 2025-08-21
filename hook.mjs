@@ -47,7 +47,7 @@ export async function load(url, context, nextLoad) {
     const transformer = transformers.get(url)
     try {
       const transformedCode = transformer.transform(code.toString('utf8'), 'unknown')
-      result.source = transformedCode
+      result.source = transformedCode?.code
       result.shortCircuit = true
     } catch(err) {
       debug('Error transforming module %s: %o', url, err)
